@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from "react";
 
 function Node(props) {
-	const { state, setState } = useState('');
-
 	const handleClick = () => {
-		setState(props.newState());
+		props.changeState(props.coordinate.rowIndex, props.coordinate.columnIndex);
 	};
 
-	useEffect(() => {}, state);
 	return (
-		<div className='node'>
-			<p>{props.coordinate}</p>
-		</div>
+		<div className={"node " + props.state} onClick={() => handleClick()}></div>
 	);
 }
 

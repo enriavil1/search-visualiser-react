@@ -45,7 +45,7 @@
 	background-color: var(--clr-grey-7);
 }
 
-.grid {
+#grid {
 	display: flex;
 	flex-wrap: wrap;
 	width: 50%;
@@ -65,6 +65,7 @@
 
 	background-color: white;
 	outline: 1px solid rgba(144, 175, 175, 0.75);
+	cursor: pointer;
 }
 
 .start {

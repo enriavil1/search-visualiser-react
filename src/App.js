@@ -9,9 +9,11 @@ function App() {
 		row: Math.floor(window.innerHeight / 40),
 		column: Math.floor(window.innerWidth / 40),
 	});
+
 	const [startNode, setStartNode] = useState({ row: null, column: null });
 	const [endNode, setEndNode] = useState({ row: null, column: null });
 	const [grid, setGrid] = useState([]);
+	const [mouseDown, setMouseDown] = useState(false);
 
 	useEffect(() => {
 		window.onresize = handleWindowResize;
@@ -44,8 +46,8 @@ function App() {
 
 	const changeState = (row, column) => {
 		const node = { row: row, column: column };
-
-		let newGrid = grid;
+		console.log(node);
+		let newGrid = [...grid];
 
 		if (currentChanger === "start") {
 			if (startNode.row !== null) {
@@ -88,21 +90,40 @@ function App() {
 		}
 
 		setGrid(newGrid);
+	};
 
-		console.log(grid);
-		console.log(startNode);
+	const handleMouseDown = (row, column) => {
+		changeState(row, column);
+		setMouseDown(true);
+		console.log("down");
+	};
+
+	const handleMouseHover = (row, column) => {
+		if (mouseDown) {
+			changeState(row, column);
+			console.log("hover");
+		}
+	};
+
+	const handleMouseUp = () => {
+		if (mouseDown) {
+			setMouseDown(false);
+		}
+		console.log("up");
 	};
 
 	return (
 		<div className='App'>
 			<Navbar changeCurrentChanger={changeCurrentChanger} />
-			<div className='grid'>
+			<div id='grid' onMouseLeave={() => setMouseDown(false)}>
 				{grid?.map((row, rowIndex) =>
 					row.map((state, columnIndex) => (
 						<Node
 							coordinate={{ rowIndex, columnIndex }}
 							state={state}
-							changeState={changeState}
+							handleMouseDown={handleMouseDown}
+							handleMouseHover={handleMouseHover}
+							handleMouseUp={handleMouseUp}
 						/>
 					)),
 				)}

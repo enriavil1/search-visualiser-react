@@ -1,12 +1,23 @@
 import React from "react";
 
 function Node(props) {
-	const handleClick = () => {
-		props.changeState(props.coordinate.rowIndex, props.coordinate.columnIndex);
-	};
-
 	return (
-		<div className={"node " + props.state} onClick={() => handleClick()}></div>
+		<div
+			className={"node " + props.state}
+			onMouseDown={() =>
+				props.handleMouseDown(
+					props.coordinate.rowIndex,
+					props.coordinate.columnIndex,
+				)
+			}
+			onMouseOver={() =>
+				props.handleMouseHover(
+					props.coordinate.rowIndex,
+					props.coordinate.columnIndex,
+				)
+			}
+			onMouseUp={() => props.handleMouseUp()}
+		></div>
 	);
 }
 

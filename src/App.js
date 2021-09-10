@@ -2,22 +2,19 @@ import "./App.css";
 import Node from "./components/Node.js";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
+import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
+	const NUM_OF_ROWS = 30;
+	const NUM_OF_COLUMNS = 45;
 	const [currentChanger, setCurrentChange] = useState("");
-	const [windowSize, setWindowSize] = useState({
-		row: Math.floor(window.innerHeight / 40),
-		column: Math.floor(window.innerWidth / 40),
-	});
-
 	const [startNode, setStartNode] = useState({ row: null, column: null });
 	const [endNode, setEndNode] = useState({ row: null, column: null });
 	const [grid, setGrid] = useState([]);
 	const [mouseDown, setMouseDown] = useState(false);
 
 	useEffect(() => {
-		window.onresize = handleWindowResize;
-		setGrid(buildGrid(windowSize.row, windowSize.column));
+		setGrid(buildGrid(NUM_OF_ROWS, NUM_OF_COLUMNS));
 	}, []);
 
 	const buildGrid = (rowLength, columnLength) => {
@@ -33,15 +30,14 @@ function App() {
 		return grid;
 	};
 
-	const handleWindowResize = () => {
-		setWindowSize({
-			row: Math.floor(window.innerHeight / 40),
-			column: Math.floor(window.innerWidth / 40),
-		});
-	};
-
-	const changeCurrentChanger = (type) => {
-		setCurrentChange(type);
+	const changeCurrentChanger = (activeButton) => {
+		if (currentChanger !== "") {
+			document.getElementById(currentChanger).classList.remove("active");
+		}
+		if (activeButton !== "") {
+			document.getElementById(activeButton).classList.add("active");
+		}
+		setCurrentChange(activeButton);
 	};
 
 	const changeState = (row, column) => {
@@ -64,7 +60,7 @@ function App() {
 		}
 
 		if (currentChanger === "end") {
-			if (endNode.row) {
+			if (endNode.row !== null) {
 				newGrid[endNode.row][endNode.column] = "";
 			}
 
@@ -87,6 +83,18 @@ function App() {
 			}
 
 			newGrid[node.row][node.column] = currentChanger;
+		}
+
+		if (currentChanger === "delete") {
+			if (node === startNode) {
+				setStartNode({ row: null, column: null });
+			}
+
+			if (node === endNode) {
+				setEndNode({ row: null, column: null });
+			}
+
+			newGrid[node.row][node.column] = "";
 		}
 
 		setGrid(newGrid);

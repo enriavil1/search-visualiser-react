@@ -6,28 +6,41 @@ function Navbar(props) {
 	};
 
 	return (
-		<div className='navbar'>
-			<div className='state-changers-btn-container'>
+		<div className='navbar navbar-expand-lg bg-dark'>
+			<div class='container-fluid'>
+				<a className='navbar-brand'>Search Visualizer</a>
 				<button
-					className='state-changers-btn'
-					value='wall'
-					onClick={(e) => handleClick(e)}
-				>
-					Wall
-				</button>
-				<button
-					className='state-changers-btn'
+					id='start'
+					className='state-changers-btn btn btn-danger btn-sm'
 					value='start'
 					onClick={(e) => handleClick(e)}
 				>
 					Start
 				</button>
 				<button
-					className='state-changers-btn'
+					id='wall'
+					className='state-changers-btn btn btn-primary btn-sm'
+					value='wall'
+					onClick={(e) => handleClick(e)}
+				>
+					Wall
+				</button>
+				<button
+					id='end'
+					className='state-changers-btn btn btn-success btn-sm'
 					value='end'
 					onClick={(e) => handleClick(e)}
 				>
 					End
+				</button>
+
+				<button
+					id='delete'
+					className='state-changers-btn btn btn-secondary btn-sm'
+					value='delete'
+					onClick={(e) => handleClick(e)}
+				>
+					Delete
 				</button>
 			</div>
 		</div>

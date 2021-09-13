@@ -3,6 +3,8 @@ import Node from "./components/Node.js";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.css";
+import { makeConnections } from "./functions/connections";
+import { bfs } from "./functions/bfsSolve";
 
 function App() {
 	const NUM_OF_ROWS = 30;
@@ -42,7 +44,6 @@ function App() {
 
 	const changeState = (row, column) => {
 		const node = { row: row, column: column };
-		console.log(node);
 		let newGrid = [...grid];
 
 		if (currentChanger === "start") {
@@ -97,7 +98,25 @@ function App() {
 			newGrid[node.row][node.column] = "";
 		}
 
+		if (currentChanger === "searching") {
+			newGrid[node.row][node.column] = "visited";
+		}
+		console.log(newGrid);
 		setGrid(newGrid);
+	};
+
+	const handleSolve = () => {
+		const connections = makeConnections(grid);
+
+		setCurrentChange("searching");
+		const [path, visited] = bfs(connections, grid, startNode, endNode);
+		for (let node of visited) {
+			if (node?.row) {
+				console.log(node);
+			}
+		}
+
+		setCurrentChange("");
 	};
 
 	const handleMouseDown = (row, column) => {
@@ -109,7 +128,6 @@ function App() {
 	const handleMouseHover = (row, column) => {
 		if (mouseDown) {
 			changeState(row, column);
-			console.log("hover");
 		}
 	};
 
@@ -117,12 +135,14 @@ function App() {
 		if (mouseDown) {
 			setMouseDown(false);
 		}
-		console.log("up");
 	};
 
 	return (
 		<div className='App'>
-			<Navbar changeCurrentChanger={changeCurrentChanger} />
+			<Navbar
+				changeCurrentChanger={changeCurrentChanger}
+				handleSolve={handleSolve}
+			/>
 			<div id='grid' onMouseLeave={() => setMouseDown(false)}>
 				{grid?.map((row, rowIndex) =>
 					row.map((state, columnIndex) => (

@@ -9,7 +9,7 @@ import { bfs } from "./functions/bfsSolve";
 function App() {
 	const NUM_OF_ROWS = 30;
 	const NUM_OF_COLUMNS = 45;
-	const [currentChanger, setCurrentChange] = useState("");
+	const [currentChanger, setCurrentChanger] = useState("");
 	const [startNode, setStartNode] = useState({ row: null, column: null });
 	const [endNode, setEndNode] = useState({ row: null, column: null });
 	const [grid, setGrid] = useState([]);
@@ -39,7 +39,7 @@ function App() {
 		if (activeButton !== "") {
 			document.getElementById(activeButton).classList.add("active");
 		}
-		setCurrentChange(activeButton);
+		setCurrentChanger(activeButton);
 	};
 
 	const changeState = (row, column) => {
@@ -97,32 +97,58 @@ function App() {
 
 			newGrid[node.row][node.column] = "";
 		}
+		setGrid(newGrid);
+	};
 
-		if (currentChanger === "searching") {
-			newGrid[node.row][node.column] = "visited";
-		}
-		console.log(newGrid);
+	const drawVisited = (row, column) => {
+		let newGrid = [...grid];
+		newGrid[row][column] = "visited";
+		setGrid(newGrid);
+	};
+
+	const drawPath = (row, column) => {
+		let newGrid = [...grid];
+		newGrid[row][column] = "path";
 		setGrid(newGrid);
 	};
 
 	const handleSolve = () => {
-		const connections = makeConnections(grid);
+		// for (let node in connections) {
+		// 	console.log(connections[node]);
+		// }
+		let visitedSet = {};
 
-		setCurrentChange("searching");
-		const [path, visited] = bfs(connections, grid, startNode, endNode);
-		for (let node of visited) {
-			if (node?.row) {
-				console.log(node);
-			}
+		visitedSet[`${startNode.row}, ${startNode.column}`] = true;
+
+		let { path, visited } = bfs(grid, startNode, endNode, [], visitedSet);
+		for (let node in visited) {
+			// let split = node.trim().split(",");
+			// let row = Number(split[0]);
+			// let column = Number(split[1]);
+			console.log(node);
+			// if (
+			// 	row !== startNode.row &&
+			// 	column !== startNode.column &&
+			// 	row !== endNode.row &&
+			// 	column !== endNode.column
+			// )
+			// 	drawVisited(row, column);
 		}
 
-		setCurrentChange("");
+		for (let node of path) {
+			if (
+				node.row !== startNode.row &&
+				node.column !== startNode.column &&
+				node.row !== endNode.row &&
+				node.column !== endNode.column
+			)
+				drawPath(node.row, node.column);
+		}
 	};
 
 	const handleMouseDown = (row, column) => {
 		changeState(row, column);
 		setMouseDown(true);
-		console.log("down");
 	};
 
 	const handleMouseHover = (row, column) => {

@@ -4,7 +4,7 @@ import { useState, useEffect, Fragment } from "react";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.css";
 import { makeConnections } from "./functions/connections";
-import { bfs } from "./functions/bfsSolve";
+import { bfs, turnIntoNode, sleep } from "./functions/bfsSolve";
 
 function App() {
 	const NUM_OF_ROWS = 30;
@@ -32,13 +32,37 @@ function App() {
 		return grid;
 	};
 
+	const resetTheGrid = () => {
+		setGrid(buildGrid(NUM_OF_ROWS, NUM_OF_COLUMNS));
+		setStartNode({ row: null, column: null });
+		setEndNode({ row: null, column: null });
+
+		document.getElementById("start").disabled = false;
+		document.getElementById("wall").disabled = false;
+		document.getElementById("end").disabled = false;
+		document.getElementById("solve").disabled = false;
+
+		// taking out the current changer
+		if (currentChanger !== "")
+			document.getElementById(currentChanger).classList.remove("active");
+		setCurrentChange("");
+
+		document.getElementById("delete").value = "delete";
+		document.getElementById("delete").innerHTML = "delete";
+	};
+
 	const changeCurrentChanger = (activeButton) => {
 		if (currentChanger !== "") {
 			document.getElementById(currentChanger).classList.remove("active");
 		}
+		if (activeButton === "reset") {
+			resetTheGrid();
+			return;
+		}
 		if (activeButton !== "") {
 			document.getElementById(activeButton).classList.add("active");
 		}
+
 		setCurrentChange(activeButton);
 	};
 
@@ -118,29 +142,42 @@ function App() {
 		setGrid(newGrid);
 	};
 
-	const handleSolve = () => {
+	const handleSolve = async () => {
 		const connections = makeConnections(grid);
 
-		const [path, visited] = bfs(connections, startNode, endNode);
-		console.log(path);
-		console.log(visited);
-
-		for (let node of visited) {
-			let split = node.trim().split(",");
-			let row = Number(split[0]);
-			let column = Number(split[1]);
-
-			drawVisited(row, column);
+		if (!startNode.row && !endNode.row) {
+			return;
 		}
 
-		for (let node of path) {
-			let split = node.trim().split(",");
-			let row = Number(split[0]);
-			let column = Number(split[1]);
-			drawPath(row, column);
+		const [path, visited] = bfs(connections, startNode, endNode);
+
+		// disabling buttons so user doesn't mess with them while or after the path has been found
+		document.getElementById("start").disabled = true;
+		document.getElementById("wall").disabled = true;
+		document.getElementById("end").disabled = true;
+		document.getElementById("solve").disabled = true;
+
+		// taking out the current changer
+		document.getElementById(currentChanger).classList.remove("active");
+		setCurrentChange("");
+
+		document.getElementById("delete").value = "reset";
+		document.getElementById("delete").innerHTML = "Reset";
+
+		for (let nodeCoordinate of visited) {
+			const node = turnIntoNode(nodeCoordinate);
+			await sleep(150);
+			drawVisited(node.row, node.column);
+		}
+
+		for (let nodeCoordinate of path) {
+			const node = turnIntoNode(nodeCoordinate);
+			await sleep(150);
+			drawPath(node.row, node.column);
 		}
 	};
 
+	// allows for drawing walls while dragging the mouse or dragging the start and ending point
 	const handleMouseDown = (row, column) => {
 		changeState(row, column);
 		setMouseDown(true);

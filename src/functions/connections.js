@@ -35,7 +35,8 @@ export const makeConnections = (grid) => {
 			leftNode = get_Node(grid, i, j - 1);
 
 			currentConnections = [topNode, bottomNode, rightNode, leftNode];
-			connections[currentNode] = currentConnections;
+			connections[`${currentNode.row}, ${currentNode.column}`] =
+				currentConnections;
 		}
 	}
 	return connections;

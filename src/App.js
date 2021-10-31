@@ -1,6 +1,6 @@
 import "./App.css";
 import Node from "./components/Node.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.css";
 import { makeConnections } from "./functions/connections";
@@ -98,31 +98,52 @@ function App() {
 			newGrid[node.row][node.column] = "";
 		}
 
-		if (currentChanger === "searching") {
-			newGrid[node.row][node.column] = "visited";
-		}
-		console.log(newGrid);
+		setGrid(newGrid);
+	};
+
+	const drawVisited = (row, column) => {
+		let newGrid = [...grid];
+		let node = { row: row, column: column };
+
+		if (node !== startNode && node !== endNode)
+			newGrid[row][column] = "visited";
+		setGrid(newGrid);
+	};
+
+	const drawPath = (row, column) => {
+		let newGrid = [...grid];
+		let node = { row: row, column: column };
+
+		if (node !== startNode && node !== endNode) newGrid[row][column] = "path";
 		setGrid(newGrid);
 	};
 
 	const handleSolve = () => {
 		const connections = makeConnections(grid);
 
-		setCurrentChange("searching");
-		const [path, visited] = bfs(connections, grid, startNode, endNode);
+		const [path, visited] = bfs(connections, startNode, endNode);
+		console.log(path);
+		console.log(visited);
+
 		for (let node of visited) {
-			if (node?.row) {
-				console.log(node);
-			}
+			let split = node.trim().split(",");
+			let row = Number(split[0]);
+			let column = Number(split[1]);
+
+			drawVisited(row, column);
 		}
 
-		setCurrentChange("");
+		for (let node of path) {
+			let split = node.trim().split(",");
+			let row = Number(split[0]);
+			let column = Number(split[1]);
+			drawPath(row, column);
+		}
 	};
 
 	const handleMouseDown = (row, column) => {
 		changeState(row, column);
 		setMouseDown(true);
-		console.log("down");
 	};
 
 	const handleMouseHover = (row, column) => {

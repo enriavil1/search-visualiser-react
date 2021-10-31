@@ -1,12 +1,6 @@
-export function bfs(graph, grid, startingNode, endingNode) {
-	const startingNodeCoordinates = {
-		row: startingNode.row,
-		column: startingNode.column,
-	};
-	const endingNodeCoordinates = {
-		row: endingNode.row,
-		column: endingNode.column,
-	};
+export function bfs(graph, startingNode, endingNode) {
+	const startingNodeCoordinates = `${startingNode.row}, ${startingNode.column}`;
+	let neighborCoordinates;
 	let path = [startingNodeCoordinates];
 
 	let vertexAndPath = [startingNodeCoordinates, path];
@@ -15,19 +9,27 @@ export function bfs(graph, grid, startingNode, endingNode) {
 
 	let visited = [];
 
-	while (bfs_queue) {
-		let [currentNodeCoordinates, path] = [bfs_queue.shift()];
+	while (bfs_queue.length) {
+		let [currentNodeCoordinates, path] = bfs_queue.shift();
 
 		visited.push(currentNodeCoordinates);
 
-		for (let neighbor in graph[currentNodeCoordinates]) {
+		for (let neighbor of graph[currentNodeCoordinates]) {
 			if (neighbor === null) continue;
-			if (!visited.includes(neighbor) && neighbor !== null) {
-				if (neighbor === endingNodeCoordinates) {
+			neighborCoordinates = `${neighbor.row}, ${neighbor.column}`;
+
+			if (visited.includes(neighborCoordinates) === false) {
+				console.log(neighborCoordinates);
+				if (
+					neighbor.row === endingNode.row &&
+					neighbor.column === endingNode.column
+				) {
 					return [path, visited];
 				}
-				bfs_queue.append([neighbor, path.concat([neighbor])]);
+				path.push(neighborCoordinates);
+				bfs_queue.push([neighborCoordinates, path]);
 			}
 		}
 	}
+	return [[], []];
 }

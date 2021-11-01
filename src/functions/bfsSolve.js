@@ -1,69 +1,71 @@
-function isNodeValid(graph, row, column, visited) {
-	if (
-		!visited[`${row}, ${column}`] &&
-		row < graph.length &&
-		row >= 0 &&
-		column < graph[0].length &&
-		column >= 0 &&
-		graph[row][column] !== "wall"
-	)
-		return { row: row, column: column };
-	return null;
-}
+export const turnIntoNode = (coordinates) => {
+	let split = coordinates.trim().split(",");
+	let row = Number(split[0]);
+	let column = Number(split[1]);
+	return { row: row, column: column };
+};
 
-function isCurrentEqualTarget(currentNode, targetNode) {
-	return (
-		currentNode.row === targetNode.row &&
-		currentNode.column === targetNode.column
-	);
-}
+export const sleep = (ms) => {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
-export function bfs(graph, current, endingNode, path = [], visited = {}) {
-	let top;
-	let bottom;
-	let right;
-	let left;
+// will walk backwards from the end point to the start point using predecessor which is a currentNode => previousNode key value pair
+const buildPath = (predecessor, startingNode, endingNode) => {
+	const startingNodeCoordinates = `${startingNode.row}, ${startingNode.column}`;
+	const EndingNodeCoordinates = `${endingNode.row}, ${endingNode.column}`;
 
-	if (isCurrentEqualTarget(current, endingNode)) {
-		path.push(current);
-		return { path, visited };
+	const stack = [];
+
+	let beforeNode = predecessor[EndingNodeCoordinates];
+
+	while (beforeNode !== startingNodeCoordinates) {
+		stack.push(beforeNode);
+		beforeNode = predecessor[beforeNode];
 	}
 
-	//checks if the current node has a top bottom right or/and left node that can be visited
-	top = isNodeValid(graph, current.row - 1, current.column, visited);
-	bottom = isNodeValid(graph, current.row + 1, current.column, visited);
-	right = isNodeValid(graph, current.row, current.column + 1, visited);
-	left = isNodeValid(graph, current.row, current.column - 1, visited);
+	// returning the reverse of the stack so we go from starting point to ending point since the stack was made from ending to starting
+	return stack.reverse();
+};
 
-	//checks if nodes exist and if they do it adds them to visited
-	if (top) visited[`${top.row}, ${top.column}`] = true;
+export function bfs(graph, startingNode, endingNode) {
+	const startingNodeCoordinates = `${startingNode.row}, ${startingNode.column}`;
 
-	if (bottom) visited[`${bottom.row}, ${bottom.column}`] = true;
+	// predecessor is a currentNode => previous node key value pair
+	// used to build the final path
+	const predecessor = [];
+	predecessor[startingNodeCoordinates] = null;
 
-	if (right) visited[`${right.row}, ${right.column}`] = true;
+	const bfs_queue = [startingNodeCoordinates]; // queue starting from the starting point
 
-	if (left) visited[`${left.row}, ${left.column}`] = true;
+	const visited = new Set();
 
-	//adds visitable nodes into the queue to be checked
-	if (top) {
-		path.push(top);
-		return bfs(graph, top, endingNode, path, visited);
+	while (bfs_queue.length) {
+		let currentNodeCoordinates = bfs_queue.shift();
+
+		let currentNode = turnIntoNode(currentNodeCoordinates);
+
+		if (
+			currentNode.row === endingNode.row &&
+			currentNode.column === endingNode.column
+		) {
+			const path = buildPath(predecessor, startingNode, endingNode);
+			visited.delete(startingNodeCoordinates); // because we dont want to paint over the starting node
+			return [path, visited];
+		}
+
+		// will loop through all the edge nodes and check if they are visited if they are nothing happens
+		for (let neighbor of graph[currentNodeCoordinates]) {
+			if (neighbor === null) continue;
+			let neighborCoordinates = `${neighbor.row}, ${neighbor.column}`;
+
+			// if neighbor node is has not been visited then it will add it into the visited list, create a predecessor spot, and then add it to the queue to check
+			if (!visited.has(neighborCoordinates)) {
+				visited.add(currentNodeCoordinates);
+				predecessor[neighborCoordinates] = currentNodeCoordinates;
+				bfs_queue.push(neighborCoordinates);
+			}
+		}
 	}
-
-	if (bottom) {
-		path.push(bottom);
-		return bfs(graph, bottom, endingNode, path, visited);
-	}
-
-	if (right) {
-		path.push(right);
-		return bfs(graph, right, endingNode, path, visited);
-	}
-
-	if (left && !visited[`${left.row}, ${left.column}`]) {
-		path.push(left);
-		return bfs(graph, left, endingNode, path, visited);
-	}
-
-	return { path: [], visited: [] };
+	visited.delete(startingNodeCoordinates); // because we dont want to paint over the starting node
+	return [[], visited];
 }

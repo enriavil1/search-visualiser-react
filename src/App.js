@@ -37,6 +37,7 @@ function App() {
 		setStartNode({ row: null, column: null });
 		setEndNode({ row: null, column: null });
 
+		// enables the usage of buttons again
 		document.getElementById("start").disabled = false;
 		document.getElementById("wall").disabled = false;
 		document.getElementById("end").disabled = false;

@@ -9,7 +9,7 @@ import { bfs, turnIntoNode, sleep } from "./functions/bfsSolve";
 function App() {
 	const NUM_OF_ROWS = 30;
 	const NUM_OF_COLUMNS = 45;
-	const [currentChanger, setCurrentChanger] = useState("");
+	const [currentChanger, setCurrentChange] = useState("");
 	const [startNode, setStartNode] = useState({ row: null, column: null });
 	const [endNode, setEndNode] = useState({ row: null, column: null });
 	const [grid, setGrid] = useState([]);
@@ -122,9 +122,6 @@ function App() {
 
 			newGrid[node.row][node.column] = "";
 		}
-		setGrid(newGrid);
-	};
-
 		setGrid(newGrid);
 	};
 

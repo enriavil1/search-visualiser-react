@@ -45,17 +45,27 @@ export const manhattanDistance = (fromNode, toNode) => {
 	return d1 + d2;
 };
 
+export const diagonalDistance = (fromNode, toNode) => {
+	const lengthOfNode = 1;
+	const diagonalLenghtOfNode = Math.sqrt(2);
+
+	const d1 = Math.abs(fromNode.column - toNode.column);
+	const d2 = Math.abs(fromNode.row - fromNode.row);
+
+	return lengthOfNode * (d1 + d2) + (diagonalLenghtOfNode - 2 * lengthOfNode) * Math.min(d1, d2);
+};
+
 export const lowestFinalScoreNode = (openSet, finalScore) => {
 	let lowestScore = -1; // lowest score can never be a negative number, so if it starts as one then we know it is empty
 	let lowestNodeString = null;
 	for (let nodeString of openSet) {
 		if (lowestScore === -1) {
-			lowestScore = finalScore[turnIntoString(nodeString)];
+			lowestScore = finalScore[nodeString];
 			lowestNodeString = nodeString;
 		}
 
-		if (finalScore[turnIntoString(nodeString)] < lowestScore) {
-			lowestScore = finalScore[turnIntoString(nodeString)];
+		if (finalScore[nodeString] < lowestScore) {
+			lowestScore = finalScore[nodeString];
 			lowestNodeString = nodeString;
 		}
 	}

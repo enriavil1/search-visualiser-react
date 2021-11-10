@@ -1,4 +1,4 @@
-import { buildPath, lowestFinalScoreNode, manhattanDistance, turnIntoNode, turnIntoString } from "./utils";
+import { buildPath, diagonalDistance, lowestFinalScoreNode, manhattanDistance, turnIntoNode, turnIntoString } from "./utils";
 
 export const AStarSolve = (graph, startNode, endNode) => {
 	const startingNodeCoordinates = turnIntoString(startNode);
@@ -15,7 +15,7 @@ export const AStarSolve = (graph, startNode, endNode) => {
 	score[startingNodeCoordinates] = 0;
 
 	const finalScore = [];
-	finalScore[startingNodeCoordinates] = score[startingNodeCoordinates] + manhattanDistance(startNode, endNode);
+	finalScore[startingNodeCoordinates] = score[startingNodeCoordinates] + diagonalDistance(startNode, endNode);
 
 	openSet.add(startingNodeCoordinates); // first node that we know we are going to look at
 
@@ -29,24 +29,25 @@ export const AStarSolve = (graph, startNode, endNode) => {
 		if (currentNode.row === endNode.row && currentNode.column === endNode.column) {
 			const path = buildPath(predecessor, startNode, endNode);
 			closedSet.delete(startingNodeCoordinates);
-			return path, closedSet;
+			closedSet.delete(turnIntoString(endNode));
+			return [path, closedSet];
 		}
 
 		for (let neighbor of graph[currentNodeString]) {
 			const neighborString = turnIntoString(neighbor);
 
-			console.log(openSet);
 			if (closedSet.has(neighborString) || neighbor === null) continue;
 
-			const currentCost = score[currentNodeString] + manhattanDistance(currentNode, neighbor); // distance between currentNode to neighbor
+			const currentCost = score[currentNodeString] + 1; // distance between currentNode to neighbor
+			const finalCurrentCost = currentCost + diagonalDistance(neighbor, endNode);
 			if (!openSet.has(neighborString) || currentCost < score[currentNodeString]) {
 				openSet.add(neighborString);
 				predecessor[neighborString] = currentNodeString;
 				score[neighborString] = currentCost;
-				finalScore[neighborString] = currentCost + manhattanDistance(neighbor, endNode);
+				finalScore[neighborString] = finalCurrentCost;
 			}
 		}
 	}
 
-	return [], closedSet;
+	return [[], closedSet];
 };

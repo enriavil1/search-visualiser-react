@@ -128,17 +128,15 @@ function App() {
 
 	const drawVisited = (row, column) => {
 		let newGrid = [...grid];
-		let node = { row: row, column: column };
 
-		if (node !== startNode && node !== endNode) newGrid[row][column] = "visited";
+		newGrid[row][column] = "visited";
 		setGrid(newGrid);
 	};
 
 	const drawPath = (row, column) => {
 		let newGrid = [...grid];
-		let node = { row: row, column: column };
 
-		if (node !== startNode && node !== endNode) newGrid[row][column] = "path";
+		newGrid[row][column] = "path";
 		setGrid(newGrid);
 	};
 
@@ -166,7 +164,7 @@ function App() {
 
 		for (let nodeCoordinate of visited) {
 			const node = turnIntoNode(nodeCoordinate);
-			await sleep(150);
+			await sleep(100);
 			drawVisited(node.row, node.column);
 		}
 

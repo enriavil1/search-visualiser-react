@@ -1,4 +1,4 @@
-import { buildPath, diagonalDistance, lowestFinalScoreNode, manhattanDistance, turnIntoNode, turnIntoString } from "./utils";
+import { buildPath, diagonalDistance, lowestFinalScoreNode, manhattanDistance, turnIntoNode, turnIntoString, euclideanDistance } from "./utils";
 
 export const AStarSolve = (graph, startNode, endNode) => {
 	const startingNodeCoordinates = turnIntoString(startNode);
@@ -15,7 +15,7 @@ export const AStarSolve = (graph, startNode, endNode) => {
 	score[startingNodeCoordinates] = 0;
 
 	const finalScore = [];
-	finalScore[startingNodeCoordinates] = score[startingNodeCoordinates] + diagonalDistance(startNode, endNode);
+	finalScore[startingNodeCoordinates] = score[startingNodeCoordinates] + euclideanDistance(startNode, endNode);
 
 	openSet.add(startingNodeCoordinates); // first node that we know we are going to look at
 
@@ -39,7 +39,7 @@ export const AStarSolve = (graph, startNode, endNode) => {
 			if (closedSet.has(neighborString) || neighbor === null) continue;
 
 			const currentCost = score[currentNodeString] + 1; // distance between currentNode to neighbor
-			const finalCurrentCost = currentCost + diagonalDistance(neighbor, endNode);
+			const finalCurrentCost = currentCost + euclideanDistance(neighbor, endNode);
 			if (!openSet.has(neighborString) || currentCost < score[currentNodeString]) {
 				openSet.add(neighborString);
 				predecessor[neighborString] = currentNodeString;

@@ -40,7 +40,7 @@ export const buildPath = (predecessor, startingNode, endingNode) => {
 // heuristic function for A* which is used for scoring a 2 dimensional graph (can only move: up, down, left, right)
 export const manhattanDistance = (fromNode, toNode) => {
 	const d1 = Math.abs(fromNode.column - toNode.column);
-	const d2 = Math.abs(fromNode.row - fromNode.row);
+	const d2 = Math.abs(fromNode.row - toNode.row);
 
 	return d1 + d2;
 };
@@ -50,9 +50,19 @@ export const diagonalDistance = (fromNode, toNode) => {
 	const diagonalLenghtOfNode = Math.sqrt(2);
 
 	const d1 = Math.abs(fromNode.column - toNode.column);
-	const d2 = Math.abs(fromNode.row - fromNode.row);
+	const d2 = Math.abs(fromNode.row - toNode.row);
+	const h_score = lengthOfNode * (d1 + d2) + (diagonalLenghtOfNode - 2 * lengthOfNode) * Math.min(d1, d2);
 
-	return lengthOfNode * (d1 + d2) + (diagonalLenghtOfNode - 2 * lengthOfNode) * Math.min(d1, d2);
+	return h_score;
+};
+
+export const euclideanDistance = (fromNode, toNode) => {
+	const d1 = fromNode.column - toNode.column;
+	const d2 = fromNode.row - toNode.row;
+
+	const h = Math.sqrt(Math.pow(d1, 2) + Math.pow(d2, 2));
+
+	return h;
 };
 
 export const lowestFinalScoreNode = (openSet, finalScore) => {

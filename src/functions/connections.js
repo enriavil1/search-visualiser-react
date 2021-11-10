@@ -1,15 +1,4 @@
-// checks if the node being requested is a valid node and returns the node if it is valid
-const get_Node = (grid, row, column) => {
-	if (
-		row < grid.length &&
-		row >= 0 &&
-		column < grid[0].length &&
-		column >= 0 &&
-		grid[row][column] !== "wall"
-	)
-		return { row: row, column: column };
-	return null;
-};
+import { get_Node } from "./utils";
 
 // returns a key value pair of all the connections a node has
 // the key is the node

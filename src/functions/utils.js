@@ -45,6 +45,7 @@ export const manhattanDistance = (fromNode, toNode) => {
 	return d1 + d2;
 };
 
+// heuristic function which is used for scoring a 2 dimensional graph that can move diagonally
 export const diagonalDistance = (fromNode, toNode) => {
 	const lengthOfNode = 1;
 	const diagonalLenghtOfNode = Math.sqrt(2);
@@ -56,6 +57,7 @@ export const diagonalDistance = (fromNode, toNode) => {
 	return h_score;
 };
 
+// heuristic function which gets the distance using the hypothenus
 export const euclideanDistance = (fromNode, toNode) => {
 	const d1 = fromNode.column - toNode.column;
 	const d2 = fromNode.row - toNode.row;
@@ -65,6 +67,7 @@ export const euclideanDistance = (fromNode, toNode) => {
 	return h;
 };
 
+// lowest final score in an openset
 export const lowestFinalScoreNode = (openSet, finalScore) => {
 	let lowestScore = -1; // lowest score can never be a negative number, so if it starts as one then we know it is empty
 	let lowestNodeString = null;

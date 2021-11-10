@@ -1,15 +1,4 @@
-// checks if the node being requested is a valid node and returns the node if it is valid
-const get_Node = (grid, row, column) => {
-	if (
-		row < grid.length &&
-		row >= 0 &&
-		column < grid[0].length &&
-		column >= 0 &&
-		grid[row][column] !== "wall"
-	)
-		return { row: row, column: column };
-	return null;
-};
+import { get_Node } from "./utils";
 
 // returns a key value pair of all the connections a node has
 // the key is the node
@@ -21,7 +10,11 @@ export const makeConnections = (grid) => {
 	//checking all sides of current node
 	let currentNode;
 	let topNode;
+	let topRideNode;
+	let topleftNode;
 	let bottomNode;
+	let bottomRightNode;
+	let bottomLeftNode;
 	let rightNode;
 	let leftNode;
 
@@ -30,13 +23,16 @@ export const makeConnections = (grid) => {
 			currentNode = { row: i, column: j };
 			if (currentNode === "wall") continue;
 			topNode = get_Node(grid, i - 1, j);
+			topRideNode = get_Node(grid, i - 1, j + 1);
+			topleftNode = get_Node(grid, i - 1, j - 1);
 			bottomNode = get_Node(grid, i + 1, j);
+			bottomRightNode = get_Node(grid, i + 1, j + 1);
+			bottomLeftNode = get_Node(grid, i + 1, j - 1);
 			rightNode = get_Node(grid, i, j + 1);
 			leftNode = get_Node(grid, i, j - 1);
 
-			currentConnections = [topNode, bottomNode, rightNode, leftNode];
-			connections[`${currentNode.row}, ${currentNode.column}`] =
-				currentConnections;
+			currentConnections = [topNode, topRideNode, topleftNode, bottomNode, bottomRightNode, bottomLeftNode, rightNode, leftNode];
+			connections[`${currentNode.row}, ${currentNode.column}`] = currentConnections;
 		}
 	}
 	return connections;

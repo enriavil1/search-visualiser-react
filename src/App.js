@@ -1,10 +1,12 @@
 import "./App.css";
 import Node from "./components/Node.js";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.css";
 import { makeConnections } from "./functions/connections";
-import { bfs, turnIntoNode, sleep } from "./functions/bfsSolve";
+import { bfs } from "./functions/bfsSolve";
+import { AStarSolve } from "./functions/AstarSolve";
+import { turnIntoNode, sleep } from "./functions/utils.js";
 
 function App() {
 	const NUM_OF_ROWS = 30;
@@ -44,8 +46,7 @@ function App() {
 		document.getElementById("solve").disabled = false;
 
 		// taking out the current changer
-		if (currentChanger !== "")
-			document.getElementById(currentChanger).classList.remove("active");
+		if (currentChanger !== "") document.getElementById(currentChanger).classList.remove("active");
 		setCurrentChange("");
 
 		document.getElementById("delete").value = "delete";
@@ -127,18 +128,15 @@ function App() {
 
 	const drawVisited = (row, column) => {
 		let newGrid = [...grid];
-		let node = { row: row, column: column };
 
-		if (node !== startNode && node !== endNode)
-			newGrid[row][column] = "visited";
+		newGrid[row][column] = "visited";
 		setGrid(newGrid);
 	};
 
 	const drawPath = (row, column) => {
 		let newGrid = [...grid];
-		let node = { row: row, column: column };
 
-		if (node !== startNode && node !== endNode) newGrid[row][column] = "path";
+		newGrid[row][column] = "path";
 		setGrid(newGrid);
 	};
 
@@ -149,7 +147,7 @@ function App() {
 			return;
 		}
 
-		const [path, visited] = bfs(connections, startNode, endNode);
+		const [path, visited] = AStarSolve(connections, startNode, endNode);
 
 		// disabling buttons so user doesn't mess with them while or after the path has been found
 		document.getElementById("start").disabled = true;
@@ -166,7 +164,7 @@ function App() {
 
 		for (let nodeCoordinate of visited) {
 			const node = turnIntoNode(nodeCoordinate);
-			await sleep(150);
+			await sleep(100);
 			drawVisited(node.row, node.column);
 		}
 
@@ -197,20 +195,11 @@ function App() {
 
 	return (
 		<div className='App'>
-			<Navbar
-				changeCurrentChanger={changeCurrentChanger}
-				handleSolve={handleSolve}
-			/>
+			<Navbar changeCurrentChanger={changeCurrentChanger} handleSolve={handleSolve} />
 			<div id='grid' onMouseLeave={() => setMouseDown(false)}>
 				{grid?.map((row, rowIndex) =>
 					row.map((state, columnIndex) => (
-						<Node
-							coordinate={{ rowIndex, columnIndex }}
-							state={state}
-							handleMouseDown={handleMouseDown}
-							handleMouseHover={handleMouseHover}
-							handleMouseUp={handleMouseUp}
-						/>
+						<Node coordinate={{ rowIndex, columnIndex }} state={state} handleMouseDown={handleMouseDown} handleMouseHover={handleMouseHover} handleMouseUp={handleMouseUp} />
 					)),
 				)}
 			</div>

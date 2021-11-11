@@ -49,9 +49,32 @@ function App() {
 		setCurrentChange("");
 	};
 
+	const eraseVisited = () => {
+		let newGrid = [...grid];
+
+		for (let i = 0; i < newGrid.length; i++) {
+			for (let j = 0; j < newGrid[i].length; j++) {
+				if (newGrid[i][j] === "visited" || newGrid[i][j] === "path") {
+					newGrid[i][j] = "";
+				}
+			}
+		}
+		document.getElementById("start").disabled = false;
+		document.getElementById("wall").disabled = false;
+		document.getElementById("end").disabled = false;
+		setSolving(false);
+		setCurrentChange("");
+		setGrid(newGrid);
+	};
+
 	const changeCurrentChanger = (activeButton) => {
 		if (activeButton === "reset") {
 			resetTheGrid();
+			return;
+		}
+
+		if (activeButton === "erase visited") {
+			eraseVisited();
 			return;
 		}
 

@@ -55,21 +55,8 @@
 	}
 }
 
-.state-changers-btn {
-	animation: grow 1s ease-in 0s forwards;
-}
-
-@keyframes shrink {
-	from {
-		width: 15%;
-	}
-	to {
-		width: 5%;
-	}
-}
-
-.active {
-	animation: shrink 1s ease-in 0s forwards;
+.navbar-button {
+	width: 15%;
 }
 
 #grid {
@@ -101,7 +88,6 @@
 }
 
 .start {
-	transition: background-color 0.5s;
 	background-color: red;
 }
 
@@ -111,16 +97,51 @@
 }
 
 .end {
-	transition: background-color 0.5s;
 	background-color: green;
 }
 
+@keyframes gettingVisited {
+	0% {
+		background-color: #fff;
+	}
+	25% {
+		background-color: hsl(261, 90%, 70%);
+	}
+	50% {
+		background-color: hsl(241, 90%, 70%);
+	}
+	75% {
+		background-color: hsl(224, 90%, 70%);
+	}
+	100% {
+		background-color: var(--clr-primary-6);
+	}
+}
+
 .visited {
-	transition: background-color 0.8s;
+	animation: gettingVisited 0.5s ease-in 0s forwards;
 	background-color: var(--clr-primary-6);
 }
 
+@keyframes buildingPath {
+	0% {
+		background-color: rgb(69, 199, 36);
+	}
+	25% {
+		background-color: rgb(72, 255, 0);
+	}
+	50% {
+		background-color: rgb(179, 255, 0);
+	}
+	75% {
+		background-color: rgb(217, 255, 0);
+	}
+	100% {
+		background-color: rgb(255, 255, 0);
+	}
+}
+
 .path {
-	transition: background-color 1.2s;
-	background-color: yellow;
+	animation: buildingPath 1.5s ease-in 0s forwards;
+	background-color: rgb(255, 255, 0);
 }

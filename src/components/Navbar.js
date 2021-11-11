@@ -8,7 +8,7 @@ function Navbar(props) {
 	};
 
 	return (
-		<div className='navbar navbar-expand navbar-light bg-light'>
+		<div className='navbar navbar-expand navbar-light'>
 			<div class='container'>
 				<a className='navbar-brand'>Search Visualizer</a>
 				<button id='start' className='navbar-button btn btn-danger btn-lg mx-5 p-2' data-bs-toggle='button' value='start' onClick={({ target }) => handleClick(target.value)}>
@@ -20,7 +20,7 @@ function Navbar(props) {
 				<button id='end' className='navbar-button btn btn-success btn-lg mx-5 p-2' data-bs-toggle='button' value='end' onClick={({ target }) => handleClick(target.value)}>
 					End
 				</button>
-				<DropdownButton title={!props.solving ? "delete" : "reset"} className='navbar-button mx-5 p-2 delete' variant='secondary' size='lg' id='dropdown-basic' data-bs-toggle='button'>
+				<DropdownButton title={!props.solving ? "Eraser" : "Reset Map"} className='navbar-button mx-5 p-2 delete' variant='secondary' size='lg' id='dropdown-basic' data-bs-toggle='button'>
 					<Dropdown.Item href='#' disabled={props.solving} onClick={() => handleClick("delete")}>
 						Eraser
 					</Dropdown.Item>
@@ -38,6 +38,9 @@ function Navbar(props) {
 					</Dropdown.Item>
 					<Dropdown.Item href='#' onClick={() => props.handleSolve("A*")}>
 						A* Algorithm
+					</Dropdown.Item>
+					<Dropdown.Item href='#' onClick={() => props.handleSolve("bidirectional")}>
+						Bidirectional Solve
 					</Dropdown.Item>
 				</DropdownButton>
 			</div>

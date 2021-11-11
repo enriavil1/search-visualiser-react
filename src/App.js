@@ -7,6 +7,7 @@ import { makeConnections } from "./functions/connections";
 import { bfs } from "./functions/bfsSolve";
 import { AStarSolve } from "./functions/AstarSolve";
 import { turnIntoNode, sleep } from "./functions/utils.js";
+import { bidirectionalSolve } from "./functions/bidirectionalBFS";
 
 function App() {
 	const NUM_OF_ROWS = 30;
@@ -140,6 +141,10 @@ function App() {
 	};
 
 	const drawVisited = (row, column) => {
+		if (row === startNode.row && column === startNode.column) return;
+
+		if (row === endNode.row && column === endNode.column) return;
+
 		let newGrid = [...grid];
 
 		newGrid[row][column] = "visited";
@@ -161,6 +166,11 @@ function App() {
 		}
 		let path;
 		let visited;
+
+		if (algorithm === "bidirectional") {
+			handleBidirectionalSolve(connections);
+			return;
+		}
 		if (algorithm === "bfs") {
 			[path, visited] = bfs(connections, startNode, endNode);
 		}
@@ -188,6 +198,58 @@ function App() {
 			const node = turnIntoNode(nodeCoordinate);
 			await sleep(150);
 			drawPath(node.row, node.column);
+		}
+	};
+
+	const handleBidirectionalSolve = async (connections) => {
+		let [path, visited] = bidirectionalSolve(connections, startNode, endNode);
+
+		// i is the beginner pointer and j is the ending pointer
+		let i;
+		let j;
+
+		// disabling buttons so user doesn't mess with them while or after the path has been found
+		document.getElementById("start").disabled = true;
+		document.getElementById("wall").disabled = true;
+		document.getElementById("end").disabled = true;
+		setSolving(true);
+
+		// taking out the current changer
+		setCurrentChange("");
+		console.log(path);
+		console.log(visited);
+
+		i = 0;
+		j = visited.length - 1;
+
+		// will create the visited for both path at the same time
+		while (i <= visited.length / 2 && j >= visited.length / 2) {
+			const startNode = turnIntoNode(visited[i]);
+			const endNode = turnIntoNode(visited[j]);
+
+			// so it doesnt slow down and keeps a 100 ms of sleep in the code I divided it by two to keep it feeling smooth and fasts
+			await sleep(75);
+			drawVisited(startNode.row, startNode.column);
+			await sleep(25);
+			drawVisited(endNode.row, endNode.column);
+			i++;
+			j--;
+		}
+
+		i = 0;
+		j = path.length - 1;
+
+		// will create a path from the starting node until the last point of the end node path
+		// the plus and minus allows for it to not leave a whole in the middle between both path if its an odd number
+		while (i <= path.length / 2 + 1 && j >= path.length / 2 - 1) {
+			const startNode = turnIntoNode(path[i]);
+			const endNode = turnIntoNode(path[j]);
+
+			await sleep(150);
+			drawPath(startNode.row, startNode.column);
+			drawPath(endNode.row, endNode.column);
+			i++;
+			j--;
 		}
 	};
 

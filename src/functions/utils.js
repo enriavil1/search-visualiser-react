@@ -21,12 +21,12 @@ export const get_Node = (grid, row, column) => {
 
 // will walk backwards from the end point to the start point using predecessor which is a currentNode => previousNode key value pair
 export const buildPath = (predecessor, startingNode, endingNode) => {
-	const startingNodeCoordinates = `${startingNode.row}, ${startingNode.column}`;
-	const EndingNodeCoordinates = `${endingNode.row}, ${endingNode.column}`;
+	const startingNodeCoordinates = turnIntoString(startingNode);
+	const endingNodeCoordinates = turnIntoString(endingNode);
 
 	const stack = [];
 
-	let beforeNode = predecessor[EndingNodeCoordinates];
+	let beforeNode = predecessor[endingNodeCoordinates];
 
 	while (beforeNode !== startingNodeCoordinates) {
 		stack.push(beforeNode);
@@ -35,6 +35,32 @@ export const buildPath = (predecessor, startingNode, endingNode) => {
 
 	// returning the reverse of the stack so we go from starting point to ending point since the stack was made from ending to starting
 	return stack.reverse();
+};
+
+export const buildBidirectionalPath = (startingPredecessors, endingPrecessors, startNode, endNode, meetingNode) => {
+	const startingNodeCoordinates = turnIntoString(startNode);
+	const endingNodeCoordinates = turnIntoString(endNode);
+	const meetingNodeCoordinates = turnIntoString(meetingNode);
+
+	const endStack = [meetingNodeCoordinates];
+
+	let beforeEndNode = endingPrecessors[meetingNodeCoordinates];
+
+	while (beforeEndNode !== endingNodeCoordinates) {
+		endStack.push(beforeEndNode);
+		beforeEndNode = endingPrecessors[beforeEndNode];
+	}
+
+	const startStack = [];
+	let beforeStartNode = startingPredecessors[meetingNodeCoordinates];
+	while (beforeStartNode !== startingNodeCoordinates) {
+		startStack.push(beforeStartNode);
+		beforeStartNode = startingPredecessors[beforeStartNode];
+	}
+	startStack.reverse();
+
+	// returning the reverse of the stack so we go from starting point to ending point since the stack was made from ending to starting
+	return [...startStack, ...endStack];
 };
 
 // heuristic function for A* which is used for scoring a 2 dimensional graph (can only move: up, down, left, right)

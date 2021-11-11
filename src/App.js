@@ -16,6 +16,7 @@ function App() {
 	const [endNode, setEndNode] = useState({ row: null, column: null });
 	const [grid, setGrid] = useState([]);
 	const [mouseDown, setMouseDown] = useState(false);
+	const [solving, setSolving] = useState(false);
 
 	useEffect(() => {
 		setGrid(buildGrid(NUM_OF_ROWS, NUM_OF_COLUMNS));
@@ -43,26 +44,17 @@ function App() {
 		document.getElementById("start").disabled = false;
 		document.getElementById("wall").disabled = false;
 		document.getElementById("end").disabled = false;
-		document.getElementById("solve").disabled = false;
+		setSolving(false);
 
 		// taking out the current changer
 		if (currentChanger !== "") document.getElementById(currentChanger).classList.remove("active");
 		setCurrentChange("");
-
-		document.getElementById("delete").value = "delete";
-		document.getElementById("delete").innerHTML = "delete";
 	};
 
 	const changeCurrentChanger = (activeButton) => {
-		if (currentChanger !== "") {
-			document.getElementById(currentChanger).classList.remove("active");
-		}
 		if (activeButton === "reset") {
 			resetTheGrid();
 			return;
-		}
-		if (activeButton !== "") {
-			document.getElementById(activeButton).classList.add("active");
 		}
 
 		setCurrentChange(activeButton);
@@ -140,27 +132,30 @@ function App() {
 		setGrid(newGrid);
 	};
 
-	const handleSolve = async () => {
-		const connections = makeConnections(grid);
+	const handleSolve = async (algorithm) => {
+		const connections = makeConnections(grid, algorithm === "A*");
 
 		if (!startNode.row && !endNode.row) {
 			return;
 		}
+		let path;
+		let visited;
+		if (algorithm === "bfs") {
+			[path, visited] = bfs(connections, startNode, endNode);
+		}
 
-		const [path, visited] = AStarSolve(connections, startNode, endNode);
+		if (algorithm === "A*") {
+			[path, visited] = AStarSolve(connections, startNode, endNode);
+		}
 
 		// disabling buttons so user doesn't mess with them while or after the path has been found
 		document.getElementById("start").disabled = true;
 		document.getElementById("wall").disabled = true;
 		document.getElementById("end").disabled = true;
-		document.getElementById("solve").disabled = true;
+		setSolving(true);
 
 		// taking out the current changer
-		document.getElementById(currentChanger).classList.remove("active");
 		setCurrentChange("");
-
-		document.getElementById("delete").value = "reset";
-		document.getElementById("delete").innerHTML = "Reset";
 
 		for (let nodeCoordinate of visited) {
 			const node = turnIntoNode(nodeCoordinate);
@@ -195,7 +190,7 @@ function App() {
 
 	return (
 		<div className='App'>
-			<Navbar changeCurrentChanger={changeCurrentChanger} handleSolve={handleSolve} />
+			<Navbar changeCurrentChanger={changeCurrentChanger} handleSolve={handleSolve} solving={solving} />
 			<div id='grid' onMouseLeave={() => setMouseDown(false)}>
 				{grid?.map((row, rowIndex) =>
 					row.map((state, columnIndex) => (

@@ -1,4 +1,4 @@
-import { buildPath, diagonalDistance, lowestFinalScoreNode, manhattanDistance, turnIntoNode, turnIntoString, euclideanDistance } from "./utils";
+import { buildPath, lowestFinalScoreNode, turnIntoNode, turnIntoString, euclideanDistance } from "./utils";
 
 export const AStarSolve = (graph, startNode, endNode) => {
 	const startingNodeCoordinates = turnIntoString(startNode);

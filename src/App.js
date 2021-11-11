@@ -46,8 +46,6 @@ function App() {
 		document.getElementById("end").disabled = false;
 		setSolving(false);
 
-		// taking out the current changer
-		if (currentChanger !== "") document.getElementById(currentChanger).classList.remove("active");
 		setCurrentChange("");
 	};
 
